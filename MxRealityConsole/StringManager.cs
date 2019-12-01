@@ -1,12 +1,20 @@
-﻿using MxRealityConsole.Models;
+﻿using MxRealityConsole.Interfaces;
+using MxRealityConsole.Models;
 using System;
 using System.Linq;
 
 namespace MxRealityConsole
 {
-    public static class StringManager
+    public class StringManager
     {
-        public static StringList Sort(string[][] stringLists, SortOrder sortOrder)
+        private readonly ISort _sort;
+
+        public StringManager(ISort sort)
+        {
+            _sort = sort;
+        }
+
+        public StringList Sort(string[][] stringLists, SortOrder sortOrder)
         {
             if (stringLists == null)
                 throw new ArgumentNullException("stringLists");
@@ -34,12 +42,9 @@ namespace MxRealityConsole
                 }
             }
 
-            if (sortedUniqueStrings != null && sortedUniqueStrings.Count() > 0)
-            {
-                Array.Sort(sortedUniqueStrings);
-                if (sortOrder.Equals(SortOrder.Descending))
-                    Array.Reverse(sortedUniqueStrings);
-            }
+            _sort.Sort(sortedUniqueStrings);
+            if (sortOrder.Equals(SortOrder.Descending))
+                _sort.Reverse(sortedUniqueStrings);
 
             return new StringList { SortedUniqueStrings = sortedUniqueStrings, DuplicateStrings = duplicateStrings };
         }

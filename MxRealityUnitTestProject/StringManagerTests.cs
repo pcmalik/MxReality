@@ -1,32 +1,51 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MxRealityConsole;
 using MxRealityConsole.Models;
+using NUnit.Framework;
+using System.Collections;
+using MxRealityConsole.Repositories;
+using MxRealityConsole.Interfaces;
 
 namespace MxRealityUnitTestProject
 {
-    [TestClass]
+    [TestFixture]
     public class StringManagerTests
     {
-        [TestMethod]
-        public void Test_Sort_When_Null_Argument_Throws_Expected_Exception()
+
+        public static IEnumerable InputParameterTestData
         {
-            Assert.ThrowsException<ArgumentNullException>(() => StringManager.Sort(null, SortOrder.Ascending)); 
+            get
+            {
+                yield return new SortUsingDotNetFramework();
+                yield return new SortUsingBubbleSort();
+            }
         }
 
-        [TestMethod]
-        public void Test_Sort_When_Empty_Argument_Throws_Expected_Exception()
+        [Test]
+        [TestCaseSource("InputParameterTestData")]
+        public void Test_Sort_When_Null_Argument_Throws_Expected_Exception(ISort sortingLogic)
+        {
+            var stringManager = new StringManager(sortingLogic);
+            Assert.Throws<ArgumentNullException>(() => stringManager.Sort(null, SortOrder.Ascending)); 
+        }
+
+        [Test]
+        [TestCaseSource("InputParameterTestData")]
+        public void Test_Sort_When_Empty_Argument_Throws_Expected_Exception(ISort sortingLogic)
         {
             var emptyStrings = new string[][] {};
-            Assert.ThrowsException<ArgumentException>(() => StringManager.Sort(emptyStrings, SortOrder.Ascending));
+            var stringManager = new StringManager(sortingLogic);
+            Assert.Throws<ArgumentException>(() => stringManager.Sort(emptyStrings, SortOrder.Ascending));
         }
 
-        [TestMethod]
-        public void Test_Sort_When_Valid_Strings_Then_Returns_Expected_Ascending_Unique_Sorted_Results()
+        [Test]
+        [TestCaseSource("InputParameterTestData")]
+        public void Test_Sort_When_Valid_Strings_Then_Returns_Expected_Ascending_Unique_Sorted_Results(ISort sortingLogic)
         {
             string[] string1 = { "def", "jkl" };
             string[] string2 = { "abc", "ghi" };
-            var sortedascendingUniqueStrings = StringManager.Sort(new string[][] { string1, string2}, SortOrder.Ascending).SortedUniqueStrings;
+            var stringManager = new StringManager(sortingLogic);
+            var sortedascendingUniqueStrings = stringManager.Sort(new string[][] { string1, string2}, SortOrder.Ascending).SortedUniqueStrings;
 
             var expectedResult = new string[] { "abc", "def", "ghi", "jkl" };
 
@@ -36,12 +55,14 @@ namespace MxRealityUnitTestProject
             Assert.AreEqual(expectedResult[3], sortedascendingUniqueStrings[3]);
         }
 
-        [TestMethod]
-        public void Test_Sort_When_Valid_Strings_Then_Returns_Expected_Descending_Unique_Sorted_Results()
+        [Test]
+        [TestCaseSource("InputParameterTestData")]
+        public void Test_Sort_When_Valid_Strings_Then_Returns_Expected_Descending_Unique_Sorted_Results(ISort sortingLogic)
         {
             string[] string1 = { "def", "jkl" };
             string[] string2 = { "abc", "ghi" };
-            var sortedDescendingUniqueStrings = StringManager.Sort(new string[][] { string1, string2 }, SortOrder.Descending).SortedUniqueStrings;
+            var stringManager = new StringManager(sortingLogic);
+            var sortedDescendingUniqueStrings = stringManager.Sort(new string[][] { string1, string2 }, SortOrder.Descending).SortedUniqueStrings;
 
             var expectedResult = new string[] { "jkl", "ghi", "def", "abc" };
 
@@ -51,12 +72,14 @@ namespace MxRealityUnitTestProject
             Assert.AreEqual(expectedResult[3], sortedDescendingUniqueStrings[3]);
         }
 
-        [TestMethod]
-        public void Test_Sort_When_Valid_Duplicate_Strings_Then_Returns_Expected_Duplicate_Results()
+        [Test]
+        [TestCaseSource("InputParameterTestData")]
+        public void Test_Sort_When_Valid_Duplicate_Strings_Then_Returns_Expected_Duplicate_Results(ISort sortingLogic)
         {
             string[] string1 = { "abc", "jkl" };
             string[] string2 = { "abc", "ghi" };
-            var duplicateStrings = StringManager.Sort(new string[][] { string1, string2 }, SortOrder.Descending).DuplicateStrings;
+            var stringManager = new StringManager(sortingLogic);
+            var duplicateStrings = stringManager.Sort(new string[][] { string1, string2 }, SortOrder.Descending).DuplicateStrings;
 
             var expectedResult = new string[] { "abc"};
 
