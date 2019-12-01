@@ -17,7 +17,7 @@ namespace MxRealityConsole
 
             try
             {
-                //Pass your chosen logic as parameter here...
+                //Change your sorting logic as parameter here...
                 var sortingLogic = GetSortingLogic(SortingLogic.BubbleSort);
 
                 var stringManager = new StringManager(sortingLogic);
@@ -41,7 +41,7 @@ namespace MxRealityConsole
         }
 
         /*
-         Note: below shown factory method design pattern could be used to choose 
+         Note: below factory method design pattern could be used to choose 
          required sorting logic implementation based on configuration settings
         */
         public static ISort GetSortingLogic(SortingLogic logicName)
